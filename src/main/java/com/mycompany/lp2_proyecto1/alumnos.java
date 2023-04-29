@@ -5,8 +5,14 @@
 package com.mycompany.lp2_proyecto1;
 
 import java.sql.CallableStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -76,6 +82,37 @@ public class alumnos {
             JOptionPane.showMessageDialog(null,"Se creo correctamente");
         }catch(Exception e){
             JOptionPane.showMessageDialog(null,"Hubo un error: "+e.toString());
+        }
+    }
+    
+    public void MostrarTabla(JTable paramTabla){
+        conexion ObjetoConexion= new conexion();
+        DefaultTableModel model= new DefaultTableModel();
+        TableRowSorter<TableModel> OrdenarTabla= new TableRowSorter<TableModel>(model);
+        paramTabla.setRowSorter(OrdenarTabla);
+        String sql="";
+        model.addColumn("ID");
+        model.addColumn("Nombre");
+        model.addColumn("Apellido");
+        model.addColumn("Edad");
+        model.addColumn("Direccion");
+        sql="SELECT * FROM `alumnos`";
+        String [] datos= new String[5];
+        Statement st;
+        try{
+            st= ObjetoConexion.establecerConexcion().createStatement();
+            ResultSet rs= st.executeQuery(sql);
+            while(rs.next()){
+                datos[0]= rs.getString(1);
+                datos[1]= rs.getString(2);
+                datos[2]= rs.getString(3);
+                datos[3]= rs.getString(4);
+                datos[4]= rs.getString(5);
+                model.addRow(datos);
+            }
+            paramTabla.setModel(model);
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null,"Error al mostrar los registros: "+e.toString());
         }
     }
 }
